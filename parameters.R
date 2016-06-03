@@ -12,6 +12,7 @@
 # d_c: scalar, strength of the effect of interactions on the colonization probability
 # d_e: scalar, strength of the effect of interactions on the extinction probability
 # A: matrix of dimension R X R with the effect of each species (column) on other species (rows)
+# SA: spatial autocorrelation - Null defaults to no spatial autocorrelation. If a numeric value is provided, it will create a 
 
 #########################
 # Example 1
@@ -43,8 +44,8 @@ d_e = 0.5
 A = matrix(0, nr = R, nc = R)
 diag(A) = 0
 
-pars = list(u_c = u_c, u_e = u_e, s_c = s_c, s_e = s_e, alpha = alpha, m = m, 
-c_0 = c_0, e_0 = e_0, c_max = c_max, e_min = e_min, d_c = d_c, d_e = d_e, A = A)
+pars = list(u_c = u_c, u_e = u_e, s_c = s_c, s_e = s_e, alpha = alpha, m = m, c_0 = c_0, e_0 = e_0, c_max = c_max, e_min = e_min, d_c = d_c, d_e = d_e, A = A,
+            SA = NULL)
 
 
 #########################

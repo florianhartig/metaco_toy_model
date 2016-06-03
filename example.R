@@ -10,41 +10,34 @@ rm(list = ls())
 library(metadym)
 source("parameters.R")
 
-# Landscape characteristics
-XY = get_XY(N)
-E = get_E(D,N)
-
-# Initial conditions
-Y0 = matrix(0, nr = N, nc = R)
-rand = matrix(runif(N*R), nr = N, nc = R)
-Y0[rand < 0.5] = 1
-
 # Run the model
 nsteps = 1000
 set.seed(1)
-test = main(XY,E,Y0,pars,A,nsteps)
 
-# Compute the number of species per time step
-alpha_div = numeric(nsteps)
-gamma_div = numeric(nsteps)
+# running without SA
 
-for(i in 1:nsteps) {
-	alpha_div[i] = mean(apply(test[[i]],1,sum))
-	p = apply(test[[i]],2,sum) / N
-	persist = numeric(R)
-	persist[p != 0] = 1
-	gamma_div[i] = sum(persist)
-}
+out = main(XY,E,Y0,pars,A,nsteps)
 
-dev.new(width = 8, height = 6)
-par(mar = c(5,6,2,1))
-plot(c(1:nsteps), alpha_div, type = "l", xlab = "Time", ylab = "Diversity", 
-cex.lab = 1.25, cex.axis = 1.25)
-title(main = "Local diversity")
+computeAlphaGamma(out)
+plotOutput(out)
 
-dev.new(width = 8, height = 6)
-par(mar = c(5,6,2,1))
-plot(c(1:nsteps), gamma_div, type = "l", xlab = "Time", ylab = "Diversity", 
-cex.lab = 1.25, cex.axis = 1.25)
-title(main = "Regional diversity")
+pars$SA = 0.5
 
+out = main(XY,E,Y0,pars,A,nsteps)
+
+computeAlphaGamma(out)
+plotOutput(out)
+
+
+
+
+
+plot(XY[,1], XY[,2], cex = 2*E[,1])
+library(ape)
+
+
+ozone.dists <- as.matrix(dist(XY))
+
+ozone.dists.inv <- 1/ozone.dists
+diag(ozone.dists.inv) <- 0
+Moran.I(E[,1], ozone.dists.inv)

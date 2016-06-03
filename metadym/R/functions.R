@@ -66,25 +66,40 @@ get_K_sparse = function(XY, alpha, eps = 0.001) {
   ConMat = exp(-1/alpha*distMat)
   diag(ConMat) = 0
   
-  nonZero = which(ConMat > eps, arr.ind = T)
+  # http://gallery.rcpp.org/articles/sparse-matrix-coercion/
   
-  nonZeroValues = rep(NA, nrow(nonZero))
+  ConMat[ConMat < eps] = 0
+  sparseConMat = as(ConMat, "dgCMatrix")
   
-  for (i in 1:nrow(nonZero)){
-    nonZeroValues[i] = ConMat[nonZero[i,1], nonZero[i,2]]
-  }
+#   nonZeroValues = rep(NA, nrow(nonZero))
+#   
+#   for (i in 1:nrow(nonZero)){
+#     nonZeroValues[i] = ConMat[nonZero[i,1], nonZero[i,2]]
+#   }
+#   
+#   sparseConMat = Matrix::sparseMatrix(i = nonZero[,1], j = nonZero[,1], x = nonZeroValues)
+#   
   
-  sparseConMat = Matrix::sparseMatrix(i = nonZero[,1], j = nonZero[,1], x = nonZeroValues)
   
   
   return(sparseConMat)
 }
-
+# 
 # XY = get_XY(100)
+# N = nrow(XY)
+# distMat = as.matrix(dist(XY, method = "euclidean", upper = T, diag = T))
+# 
+# distMat = as(distMat, "dgCMatrix")
+# 
 # alpha = 0.01
 # eps = 0.001
-# K = get_K(XY, 0.01)
+# K = get_K_sparse(XY, 0.01)
+# temp = K
 # 
-# K%*%XY
-
-
+# class(sparseConMat %*% distMat)
+# crossprod(K, distMat)
+# 
+# library(qlcMatrix)
+# 
+# jcrossprod(K, distMat)
+# 

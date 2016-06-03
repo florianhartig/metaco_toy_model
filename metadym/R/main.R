@@ -9,6 +9,17 @@
 
 # Main function
 main = function(XY, E, Y0, pars, A, nsteps) {
+  
+  
+  # Landscape characteristics
+  XY = metadym::get_XY(N)
+  E = metadym::get_E(D,N, SA = 0.5, XY = XY)
+  
+  # Initial conditions
+  Y0 = matrix(0, nr = N, nc = R)
+  rand = matrix(runif(N*R), nr = N, nc = R)
+  Y0[rand < 0.5] = 1
+  
 
   with(pars, {
 
@@ -20,7 +31,7 @@ main = function(XY, E, Y0, pars, A, nsteps) {
 	Y = Y0 
 
 	# Compute the connectivity matrix
-	K = get_K(XY, alpha)
+	K = metadym::get_K(XY, alpha)
 
 	# Compute the local performance
 	S = S_f(E, u_c, s_c)
@@ -29,6 +40,7 @@ main = function(XY, E, Y0, pars, A, nsteps) {
 
   # Store the results
 	RES = list()
+	COL = rep(NA, nsteps)
 
   	# Main loop
   	for(time in 1:nsteps) {
@@ -47,7 +59,9 @@ main = function(XY, E, Y0, pars, A, nsteps) {
 
   		# Perform the test
   		rand = matrix(runif(N*R), nr = N, nc = R)
-  		delta[Y == 0 & rand < P_col] = 1
+  		colonize = Y == 0 & rand < P_col
+  		delta[colonize] = 1
+  		COL[time] = mean(colonize)
 
   		### Extinction ###
   		# Compute the extinction probability
@@ -65,7 +79,7 @@ main = function(XY, E, Y0, pars, A, nsteps) {
   	 
  #    cat("Step = ", time, '\n')
     } # End of loop 
-  RES
+  return(list(occupancy = RES, colonization = COL, XY = XY, E = E))
   })
 }
 
