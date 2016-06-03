@@ -7,10 +7,8 @@
 ####################
 rm(list = ls())
 
-source("functions.R")
+library(metadym)
 source("parameters.R")
-source("landscape.R")
-source("main.R")
 
 # Landscape characteristics
 XY = get_XY(N)

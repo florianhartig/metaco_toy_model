@@ -56,3 +56,35 @@ get_K = function(XY, alpha) {
 }
 
 
+#' Compute the connectivity matrix
+#' @param XY location of patches
+#' @param alpha distance decay of dispersal
+#' @param eps cutoff for sparse matrix
+get_K_sparse = function(XY, alpha, eps = 0.001) {
+  N = nrow(XY)
+  distMat = as.matrix(dist(XY, method = "euclidean", upper = T, diag = T))
+  ConMat = exp(-1/alpha*distMat)
+  diag(ConMat) = 0
+  
+  nonZero = which(ConMat > eps, arr.ind = T)
+  
+  nonZeroValues = rep(NA, nrow(nonZero))
+  
+  for (i in 1:nrow(nonZero)){
+    nonZeroValues[i] = ConMat[nonZero[i,1], nonZero[i,2]]
+  }
+  
+  sparseConMat = Matrix::sparseMatrix(i = nonZero[,1], j = nonZero[,1], x = nonZeroValues)
+  
+  
+  return(sparseConMat)
+}
+
+# XY = get_XY(100)
+# alpha = 0.01
+# eps = 0.001
+# K = get_K(XY, 0.01)
+# 
+# K%*%XY
+
+

@@ -7,10 +7,8 @@
 ####################
 rm(list = ls())
 
-source("functions.R")
+library(metadym)
 source("parameters.R")
-source("landscape.R")
-source("main.R")
 
 Nseq = 10^seq(1,4,length = 10)
 res = numeric(10)
