@@ -1,0 +1,43 @@
+---
+---
+title: "MetaDym Demo"
+author: "Florian Hartig"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A quick start guide for the BayesianTools package}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8](inputenc)
+---
+
+```{r, echo = F}
+set.seed(1)
+```
+
+
+```{r}
+
+library(metadym)
+
+# Global model parameters
+
+nsteps = 500
+N = 100
+D = 2
+R = 50
+
+pars = getDefaultParameters()
+
+
+# Run the model
+
+out = main(XY,E,Y0,pars,A,nsteps)
+
+```
+
+Plot output / optionally returns statistics
+
+```{r, fig.width=10, fig.height=10}
+statistics <- plotOutput(out)
+```
+
+
