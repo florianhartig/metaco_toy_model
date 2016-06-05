@@ -1,5 +1,4 @@
 ---
----
 title: "MetaDym Demo"
 author: "Florian Hartig"
 output: rmarkdown::html_vignette
@@ -13,30 +12,60 @@ vignette: >
 set.seed(1)
 ```
 
+## Installing the model to your R system 
+
+The model source code is at [https://github.com/florianhartig/metaco_toy_model](https://github.com/florianhartig/metaco_toy_model)
+
+You can conveniently install a pre-packaged version via typing
+
+```{r, eval = F}
+library(devtools)
+install_url("https://dl.dropboxusercontent.com/s/cvsvuial6nqmqov/metadym_0.0.0.9000.tar.gz", dependencies = T)
+```
+
+
+## Using the model
+
+### Loading the model and help
+
+```{r}
+library(metadym)
+?metadym
+```
+
+
+### Setting and changing model parameters
+
 
 ```{r}
 
-library(metadym)
-
 # Global model parameters
 
-nsteps = 500
-N = 100
-D = 2
-R = 50
+nsteps = 500 # Number of time steps 
+N = 200 # Number of patches
+D = 2 # Number of niches
+R = 25 # Number of species
 
-pars = getDefaultParameters()
+# Process parameters
 
+pars = getDefaultParameters() # type getDefaultParameters in console to see how defaults are created
 
-# Run the model
+# Changing process defaults
 
-out = main(XY,E,Y0,pars,A,nsteps)
+pars$SA = 0.04
 
 ```
 
-Plot output / optionally returns statistics
+### Running the model
 
-```{r, fig.width=10, fig.height=10}
+```{r}
+out = runModel(pars,nsteps)
+```
+
+
+### Plot output / optionally return statistics
+
+```{r, fig.width=12, fig.height=12}
 statistics <- plotOutput(out)
 ```
 

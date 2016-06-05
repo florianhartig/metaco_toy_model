@@ -1,19 +1,12 @@
-#####################
-#
-# Main function performing the spatially explicit model
-# All of the different steps are functions, provided in other scripts
-# Dominique Gravel
-# June 2nd, 2016
-# 
-####################
-
-# Main function
-main = function(XY, E, Y0, pars, A, nsteps) {
+#' Main function performing the spatially explicit model
+#' @note  All of the different steps are functions, provided in other scripts
+#' @author  Dominique Gravel
+runModel = function(pars, nsteps) {
   
   
   # Landscape characteristics
   XY = metadym::get_XY(N)
-  E = metadym::get_E(D,N, SA = 0.5, XY = XY)
+  E = metadym::get_E(D,N, SA = pars$SA, XY = XY)
   
   # Initial conditions
   Y0 = matrix(0, nr = N, nc = R)
@@ -39,8 +32,8 @@ main = function(XY, E, Y0, pars, A, nsteps) {
   e0_E = (1 - matrix(e_0,nr=N,nc=R,byrow=TRUE))*(1-M) + matrix(e_0,nr=N,nc=R,byrow=TRUE)
 
   # Store the results
-	RES = list()
-	COL = rep(NA, nsteps)
+  
+	RES = array(dim=c(nsteps,N,R))
 
   	# Main loop
   	for(time in 1:nsteps) {
@@ -59,9 +52,7 @@ main = function(XY, E, Y0, pars, A, nsteps) {
 
   		# Perform the test
   		rand = matrix(runif(N*R), nr = N, nc = R)
-  		colonize = Y == 0 & rand < P_col
-  		delta[colonize] = 1
-  		COL[time] = mean(colonize)
+  		delta[Y == 0 & rand < P_col] = 1
 
   		### Extinction ###
   		# Compute the extinction probability
@@ -75,11 +66,14 @@ main = function(XY, E, Y0, pars, A, nsteps) {
   		Y = Y + delta
 
   		### Record results ###
-  		RES[[time]] = Y
+  		RES[time,,] = Y
   	 
  #    cat("Step = ", time, '\n')
     } # End of loop 
-  return(list(occupancy = RES, colonization = COL, XY = XY, E = E))
+	
+	
+	
+  return(list(occupancy = RES, XY = XY, E = E, pars = pars))
   })
 }
 
